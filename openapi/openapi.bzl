@@ -65,16 +65,24 @@ def _new_generator_command(ctx, gen_dir, rjars):
             output = gen_dir,
         )
 
+        gen_cmd += ' -D "{properties}"'.format(
+            properties = _comma_separated_pairs(ctx.attr.system_properties),
+        )
+
     if _is_openapi_codegen(ctx):
+        # OpenAPI removes the the passthrough -D option that swagger supports, so we must place these system properties
+        # BEFORE the invocation of the main class
+        gen_cmd += ' -D "{properties}"'.format(
+            properties = _comma_separated_pairs(ctx.attr.system_properties),
+        )
+
+
         gen_cmd += " org.openapitools.codegen.OpenAPIGenerator generate -i {spec} -g {language} -o {output}".format(
             spec = ctx.file.spec.path,
             language = ctx.attr.language,
             output = gen_dir,
         )
 
-    gen_cmd += ' -D "{properties}"'.format(
-        properties = _comma_separated_pairs(ctx.attr.system_properties),
-    )
 
     additional_properties = dict(ctx.attr.additional_properties)
 
@@ -106,7 +114,7 @@ def _new_generator_command(ctx, gen_dir, rjars):
 
     # fixme: by default, swagger-codegen is rather verbose. this helps with that but can also mask useful error messages
     # when it fails. look into log configuration options. it's a java app so perhaps just a log4j.properties or something
-    gen_cmd += " 2>/dev/null"
+    # gen_cmd += " 2>/dev/null"
     return gen_cmd
 
 def _impl(ctx):

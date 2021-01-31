@@ -40,6 +40,21 @@ Then in your `BUILD` file, just add the following so the rules will be available
 load("@io_bazel_rules_openapi//openapi:openapi.bzl", "openapi_gen")
 ```
 
+
+### OpenAPI Generator
+
+These rules default to using the swagger-codegen CLI, but can be configured to use the openapi-generator-cli instead.  
+Use the following block iin your `WORKSPACE` file instead:
+
+```
+# https://github.com/meetup/rules_openapi/blob/master/openapi/openapi.bzl#L20
+openapi_repositories(
+    codegen_cli_version = "5.0.0",
+    codegen_cli_sha256 = "839fade01e54ce1eecf012b8c33adb1413cff0cf2e76e23bc8d7673f09626f8e",
+    codegen_cli_provider = "openapi"
+)
+```
+
 ## Bazel compatibility matrix
 
 | Bazel version | rules_openapi commit                     | sha256 hash                                                      |
