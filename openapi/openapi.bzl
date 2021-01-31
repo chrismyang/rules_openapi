@@ -72,9 +72,14 @@ def _new_generator_command(ctx, gen_dir, rjars):
     if _is_openapi_codegen(ctx):
         # OpenAPI removes the the passthrough -D option that swagger supports, so we must place these system properties
         # BEFORE the invocation of the main class
-        gen_cmd += ' -D "{properties}"'.format(
-            properties = _comma_separated_pairs(ctx.attr.system_properties),
-        )
+        gen_cmd += " ".join([
+            "-D{}={}".format(k, v)
+            for k, v in ctx.attr.system_properties
+        ])
+
+#        gen_cmd += ' -D "{properties}"'.format(
+#            properties = _comma_separated_pairs(ctx.attr.system_properties),
+#        )
 
 
         gen_cmd += " org.openapitools.codegen.OpenAPIGenerator generate -i {spec} -g {language} -o {output}".format(
